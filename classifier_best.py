@@ -2,6 +2,7 @@ from typing import List, Set, Dict, Any
 from random import random
 import re as re
 import math as math
+import statistics
 
 
 def count_labels(labels: List):
@@ -14,8 +15,8 @@ def predassembling( train_texts: List[str]) -> Any:
     result = list()
     for i in range(len(train_texts)):
         tmp = re.split('[^0-9a-z]', train_texts[i].lower())
-        tmp = [j for j in tmp if len(j) > 3]
-        tmp += [tmp[j]+tmp[j+1] for j in range(len(tmp)-1) if len(tmp[j]) > 3 and len(tmp[j+1]) > 3]
+        #tmp = [j for j in tmp if len(j) > 1]
+        tmp = [tmp[j]+tmp[j+1] for j in range(len(tmp)-1) if len(tmp[j]) > 0 and len(tmp[j+1]) > 0]
         result.append(tmp)
     return result
 
@@ -52,6 +53,7 @@ def train(
     neg_length = 0
     pos_words = 0
     neg_words = 0
+
     predlist = predassembling(train_texts)
     
     for i in range(len(predlist)):
@@ -70,6 +72,23 @@ def train(
 
     pos_params = make_dict(positive)
     neg_params = make_dict(negative)
+
+    """pos_dict = {k: v for k, v in sorted(pos_params.items(), key=lambda item: item[1], reverse = True)}
+    neg_dict = {k: v for k, v in sorted(neg_params.items(), key=lambda item: item[1], reverse = True)}
+    tmp = 0
+    for i in pos_dict:
+        if tmp == 30:
+            break
+        print(i, ": ", pos_dict[i] / pos_words)
+        tmp += 1
+    tmp = 0
+    for i in neg_dict:
+        if tmp == 30:
+            break
+        print(i, ": ", neg_dict[i] / neg_words)
+        tmp += 1"""
+
+    
 
     res = [pos_set, neg_set, pos_params, neg_params, pos_length, neg_length, pos_words, neg_words]
 
